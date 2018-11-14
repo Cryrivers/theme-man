@@ -97,4 +97,4 @@ function MyButton({ children }) {
 
 ### Why `createThemeModifier` instead of setting those CSS variables by myself?
 
-Because sometimes your components might use `Portal` to render some component out of the scope. `createThemeModifier` also provides the context so you can still read correct values by using `ThemeModifierContext.Consumer` instead of applying the root values.
+Because sometimes your components might use `Portal` to render some component out of the scope. `createThemeModifier` provides the context so you can still read correct values by using `ThemeModifierContext` instead of applying the root values.
