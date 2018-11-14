@@ -20,6 +20,7 @@ function generateReactStyle<T extends ThemeVariableObject>(obj: T) {
 export function createThemeMan<T extends ThemeVariableObject>(
   defaultValues: T
 ) {
+  let timerId: number | undefined;
   const styleTag = document.createElement("style");
   const theme = ({} as any) as T;
 
@@ -29,11 +30,14 @@ export function createThemeMan<T extends ThemeVariableObject>(
   }
 
   function updateStyle() {
-    const result = generateStringStylesheet(defaultValues);
-    styleTag.innerText = `:root { ${result} }`;
     if (!document.head.contains(styleTag)) {
       document.head.appendChild(styleTag);
     }
+    clearTimeout(timerId);
+    timerId = setTimeout(() => {
+      const result = generateStringStylesheet(defaultValues);
+      styleTag.innerText = `:root { ${result} }`;
+    }, 0);
   }
 
   Object.keys(defaultValues).forEach(key => {
