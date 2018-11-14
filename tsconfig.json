@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "es2017"],
+    "strict": true,
+    "target": "es5",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "importHelpers": true,
+    "noEmitHelpers": true,
+    "noUnusedLocals": true,
+    "outDir": "./lib",
+    "baseUrl": "./",
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true
+  },
+  "include": ["./src/**/*"]
+}
