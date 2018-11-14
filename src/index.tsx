@@ -1,6 +1,21 @@
 import { kebabCase } from "lodash-es";
 import * as React from "react";
 
+export const ThemeModifierContext = React.createContext({});
+
+const ThemeModifier: React.SFC<{
+  modifier: ThemeVariableObject;
+}> = ({ modifier, children }) => {
+  // const result = React.useMemo(modifier, [modifier]);
+  return (
+    <span style={{ display: "contents", ...modifier }}>
+      <ThemeModifierContext.Provider value={modifier}>
+        {children}
+      </ThemeModifierContext.Provider>
+    </span>
+  );
+};
+
 type ThemeVariableObject = { [key: string]: string };
 
 function generateStringStylesheet<T extends ThemeVariableObject>(obj: T) {
@@ -9,7 +24,7 @@ function generateStringStylesheet<T extends ThemeVariableObject>(obj: T) {
     .join("");
 }
 
-function generateReactStyle<T extends ThemeVariableObject>(obj: T) {
+function generateReactStyle<T extends Partial<ThemeVariableObject>>(obj: T) {
   const reactStyleObj: ThemeVariableObject = {};
   Object.keys(obj).forEach(key => {
     reactStyleObj[`--${kebabCase(key)}`] = obj[key] as string;
@@ -24,14 +39,18 @@ export function createThemeMan<T extends ThemeVariableObject>(
   const styleTag = document.createElement("style");
   const theme = ({} as any) as T;
 
-  function createThemeModifier(obj: Partial<T>): ThemeVariableObject {
-    // @ts-ignore
-    return generateReactStyle(obj);
+  function createThemeModifier(obj: Partial<T>) {
+    const ModifierComponent: React.SFC = ({ children }) => (
+      <ThemeModifier modifier={generateReactStyle(obj)}>
+        {children}
+      </ThemeModifier>
+    );
+    return ModifierComponent;
   }
 
   function updateStyle() {
-    if (!document.head.contains(styleTag)) {
-      document.head.appendChild(styleTag);
+    if (!document.head!.contains(styleTag)) {
+      document.head!.appendChild(styleTag);
     }
     clearTimeout(timerId);
     timerId = setTimeout(() => {
@@ -56,19 +75,3 @@ export function createThemeMan<T extends ThemeVariableObject>(
 
   return { theme, createThemeModifier };
 }
-
-export const ThemeModifierContext = React.createContext({});
-
-export const ThemeModifier: React.SFC<{
-  modifier: () => {};
-}> = ({ modifier, children }) => {
-  // const result = React.useMemo(modifier, [modifier]);
-  const result = modifier();
-  return (
-    <div style={{ display: "contents", ...result }}>
-      <ThemeModifierContext.Provider value={result}>
-        {children}
-      </ThemeModifierContext.Provider>
-    </div>
-  );
-};

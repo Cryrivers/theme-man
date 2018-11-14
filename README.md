@@ -5,7 +5,7 @@ JavaScript Bindings for Global CSS Variables
 ## Installation
 
 ```sh
-npm install theme-man
+npm install --save theme-man
 ```
 
 ## Usage
@@ -13,6 +13,7 @@ npm install theme-man
 ### Create a theme object
 
 ```js
+// src/theme.js
 import { createThemeMan } from "theme-man";
 
 const defaultThemeValues = {
@@ -26,7 +27,7 @@ export const Theme = theme;
 
 `theme-man` will create global CSS Variables according to `defaultThemeValues`.
 
-### Use it in your components
+### Use it in components
 
 ```jsx
 import { Theme } from "src/theme";
@@ -65,19 +66,16 @@ const defaultThemeValues = {
 
 const { theme, createThemeModifier } = createThemeMan(defaultThemeValues);
 
-export function makeItGreen() {
-  return createThemeModifier({
-    primaryColor: "green"
-  });
-}
+export const GreenModifier = createThemeModifier({
+  primaryColor: "green"
+});
 
 export const Theme = theme;
 ```
 
 ```jsx
 
-import { Theme, makeItGreen } from "src/theme";
-import { ThemeModifier } from 'theme-man';
+import { Theme, GreenModifier } from "src/theme";
 
 function MyButton({ children }) {
   return (
@@ -92,11 +90,11 @@ function MyButton({ children }) {
 }
 
 <MyButton>This is a red button</MyButton>
-<ThemeModifier modifier={makeItGreen}>
+<GreenModifier>
   <MyButton>This is a green button</MyButton>
-</ThemeModifier>
+</GreenModifier>
 ```
 
-### Why `ThemeModifier` instead of setting those CSS variables by myself?
+### Why `createThemeModifier` instead of setting those CSS variables by myself?
 
-Because sometimes your components might use `Portal` to render some component out of the scope. `ThemeModifier` also provides the context so you can still read correct values by using `ThemeModifierContext.Consumer` instead of applying the root values.
+Because sometimes your components might use `Portal` to render some component out of the scope. `createThemeModifier` also provides the context so you can still read correct values by using `ThemeModifierContext.Consumer` instead of applying the root values.
