@@ -74,9 +74,6 @@ export function createThemeMan<T extends ThemeVariableObject>(
   }
 
   function updateStyle() {
-    if (!document.head!.contains(styleTag)) {
-      document.head!.appendChild(styleTag);
-    }
     clearTimeout(timerId);
     timerId = setTimeout(() => {
       const result = generateStringStylesheet(defaultValues);
@@ -95,6 +92,10 @@ export function createThemeMan<T extends ThemeVariableObject>(
       }
     });
   });
+
+  if (!document.head!.contains(styleTag)) {
+    document.head!.appendChild(styleTag);
+  }
 
   updateStyle();
 
