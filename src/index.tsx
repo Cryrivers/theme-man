@@ -1,6 +1,9 @@
 import { kebabCase } from "lodash-es";
 import * as React from "react";
 
+const themeManPrefix = "_tm";
+let variableId = 0;
+
 export const ThemeModifierContext = React.createContext({});
 
 const ThemeModifier: React.SFC<{
@@ -17,27 +20,45 @@ const ThemeModifier: React.SFC<{
 };
 
 type ThemeVariableObject = { [key: string]: string };
-
-function generateStringStylesheet<T extends ThemeVariableObject>(obj: T) {
-  return Object.keys(obj)
-    .map(key => `--${kebabCase(key)}: ${obj[key]};`)
-    .join("");
-}
-
-function generateReactStyle<T extends Partial<ThemeVariableObject>>(obj: T) {
-  const reactStyleObj: ThemeVariableObject = {};
-  Object.keys(obj).forEach(key => {
-    reactStyleObj[`--${kebabCase(key)}`] = obj[key] as string;
-  });
-  return reactStyleObj;
-}
+type Options = {
+  avoidNameCollision?: boolean;
+};
 
 export function createThemeMan<T extends ThemeVariableObject>(
-  defaultValues: T
+  defaultValues: T,
+  options: Options = {}
 ) {
+  // Options
+  const { avoidNameCollision = true } = options;
+
   let timerId: number | undefined;
   const styleTag = document.createElement("style");
   const theme = ({} as any) as T;
+  const namingMapping: { [key: string]: number | undefined } = {};
+
+  function minifiedName(originalKey: string) {
+    if (typeof namingMapping[originalKey] === "undefined") {
+      variableId = variableId + 1;
+      namingMapping[originalKey] = variableId;
+    }
+    return `${themeManPrefix}${namingMapping[originalKey]}`;
+  }
+
+  const formattingKey = avoidNameCollision ? minifiedName : kebabCase;
+
+  function generateStringStylesheet(obj: T) {
+    return Object.keys(obj)
+      .map(key => `--${formattingKey(key)}: ${obj[key]};`)
+      .join("");
+  }
+
+  function generateReactStyle(obj: Partial<T>) {
+    const reactStyleObj: ThemeVariableObject = {};
+    Object.keys(obj).forEach(key => {
+      reactStyleObj[`--${formattingKey(key)}`] = obj[key] as string;
+    });
+    return reactStyleObj;
+  }
 
   function createThemeModifier(obj: Partial<T>) {
     const modifier = generateReactStyle(obj);
@@ -66,7 +87,7 @@ export function createThemeMan<T extends ThemeVariableObject>(
   Object.keys(defaultValues).forEach(key => {
     Object.defineProperty(theme, key, {
       get() {
-        return `var(--${kebabCase(key)})`;
+        return `var(--${formattingKey(key)})`;
       },
       set(value) {
         defaultValues[key] = value;

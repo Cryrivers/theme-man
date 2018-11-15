@@ -1,6 +1,6 @@
 {
   "name": "theme-man",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "main": "./lib/index.js",
   "module": "./lib/index.js",
   "typings": "./lib/index.d.ts",

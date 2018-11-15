@@ -20,7 +20,13 @@ const defaultThemeValues = {
   primaryColor: "red"
 };
 
-const { theme } = createThemeMan(defaultThemeValues);
+const { theme } = createThemeMan(defaultThemeValues, {
+  /*
+    Theme Man will generate minified and unique names for CSS variables. By default it is enabled.
+    You could turn it off if you want readable names during development.
+  */
+  avoidNameCollision: true
+});
 
 export const Theme = theme;
 ```
