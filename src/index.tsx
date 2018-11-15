@@ -40,8 +40,12 @@ export function createThemeMan<T extends ThemeVariableObject>(
   const theme = ({} as any) as T;
 
   function createThemeModifier(obj: Partial<T>) {
-    const ModifierComponent: React.SFC = ({ children }) => (
-      <ThemeModifier modifier={generateReactStyle(obj)}>
+    const modifier = generateReactStyle(obj);
+    const ModifierComponent: React.SFC<{ enabled: boolean }> = ({
+      children,
+      enabled = true
+    }) => (
+      <ThemeModifier modifier={enabled ? modifier : {}}>
         {children}
       </ThemeModifier>
     );
