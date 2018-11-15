@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["dom", "es2017"],
+    "types": ["react", "lodash", "lodash-es"],
     "strict": true,
     "target": "es5",
     "module": "esnext",
@@ -9,10 +10,10 @@
     "importHelpers": true,
     "noEmitHelpers": true,
     "noUnusedLocals": true,
-    "outDir": "./lib",
     "baseUrl": "./",
     "forceConsistentCasingInFileNames": true,
-    "declaration": true
+    "declaration": true,
+    "declarationDir": "./lib"
   },
   "include": ["./src/**/*"]
 }
